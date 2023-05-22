@@ -13,7 +13,6 @@ import java.util.Map;
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepo employeeRepo;
-
     /*
      * @Description : this method is used to Post of employees data in JSON format
      *
@@ -23,15 +22,15 @@ public class EmployeeServiceImpl implements EmployeeService {
      *
      */
     @Override
-    public void createEmployee(Map<String, String> employees) {
+    public String createEmployee(Map<String, String> employees) {
         employees.forEach((name, supervisor)->{
             Employee employee = new Employee();
             employee.setName(name);
             employee.setSupervisor(supervisor);
             employeeRepo.save(employee);
         });
+        return "Employee added successfully";
     }
-
     /*
      * @Description : this method is used to get of employees data based on name parameter
      *
@@ -42,7 +41,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public Map<String, String> getSupervisorsByName(String name) {
-
         try {
             Employee employee = employeeRepo.findByName(name);
             if (employee == null) {
@@ -50,9 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
             Map<String, String> supervisors = new HashMap<>();
             supervisors.put("supervisors", employee.getSupervisor());
-            Employee supervisor = employeeRepo.findBySupervisor(employee.getSupervisor());
+            Employee supervisor = employeeRepo.findByName(employee.getSupervisor());
             if (supervisor != null) {
-                supervisors.put("supervisorOfSupervisors", supervisor.getSupervisor());
+                supervisors.put("SeniorSupervisors", supervisor.getSupervisor());
             }
             return supervisors;
         } catch (EmployeeNotFoundException ex) {
